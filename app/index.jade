@@ -1,0 +1,117 @@
+extends jade/base
+
+block header
+    | Concurrent C Programming
+
+block content
+    h1 Chapter 1
+    h2 Introduction
+    p.
+        The purpose of this seminar project is to become familiar with writing concurrent programs in c. The main
+        challenge is to manage shared resources that multiple clients can access simultaneously. During the period
+        when one client is using a specific resource it must be guaranteed that another client cannot manipulate the
+        resource. However, any attempt to protect an individual resource should not block the system as a whole.
+
+    h2 Requirements
+    ul
+        li There should be no global lock
+        li The server will save the names of the players
+        li Communication via TCP/IP
+        li Concurrency can be implemented through forking and shared memory
+            ul
+                li or optionally with threads
+                li one thread or process per client connection
+                li the main thread can bild/listen/accpet
+        li The focus is on the Server Implementation
+            ul
+                li The Client is primarily for testing and "having fun"
+                li The Server will be tested by a Script from the Lecturer
+        li Locking, and simultaneous access is implemented by the Server
+        li Debugging messages from the Client/Server to stderr
+
+    h2 Goals
+    p.
+        The assigned task is to program a multiplayer game. When at least two players have connected to the game server
+        the game will begin. More players can join or leave the game at any time. Players compete to obtain cells in the
+        games n x n grid, where n is equal to the number of players. The goal is for a player to obtain all the cell in
+        the playing field.
+
+    h2 Gameplay
+
+    ul
+        li The Server starts and waits until more than 2 players have joined the game.
+        li As soon as 2 players have joined, the players may begin trying to obtain the field.
+        li New players may join or leave the game at any time
+        li The Server tests the status of the game field every y seconds, where 1 <= y <= 30
+            ul
+                li.
+                    If a player, at the time the status is checked, has obtained all the cells of a field, that player
+                    has won the game and the game is ended.
+
+
+    h2 Communication Protokol
+
+    ul
+        li Every command is ended with \n
+        li No command is longer than 256 characters, including \n
+        li Every player can only send 1 command and must wait for the response
+
+    h3 Successful Registration
+
+    blockquote.dontsplit
+
+        p Client: HELLO\n
+        p Server: SIZE n\n
+
+    h3 Unsuccessful registration:
+
+    blockquote.dontsplit
+        p Client: HELLO\n
+        p Server: NACK\n
+        p -> Terminate Connection
+
+    h3 Game Start
+    blockquote.dontsplit
+        p Server: START\n
+        p Client: - (no response expected)
+
+    h3 Obtain cell successful
+    | A cell can be taken when no other player is currently in the process of take the same cell.
+    blockquote.dontsplit
+        p Client: TAKE X Y\n
+        p Server: TAKEN\n
+
+    h3 Obtain cell unsuccessful
+    | If one of more other players are currently in the process of taking the same cell, all attempts
+    | except the first one will be unsuccessful
+    blockquote.dontsplit
+        p Client: TAKE X Y\n
+        p Server: INUSE\n
+
+    h3 Show Cell Status
+    blockquote.dontsplit
+        p Client: STATUS X Y\n
+        p Server: Name-of-Player\n
+
+    h3 End of Game
+    | As soon as a player has obtained all the cells of the playing field he or she has won the game
+    | The server will respond to any other client's command by sending the win message.
+    blockquote.dontsplit
+        p Server: END Name-of-Player\n
+        p Client: - ( client ends game )
+
+
+    h1 Chaper 2
+    h2 Installation
+    h2 Usage
+
+    h1 Chapter 3
+    h2 Project Implementation
+
+    p.
+        The server application is implemented in 2 parts, a <strong>Field Manager</strong> and a <strong>TCP Server</strong>.
+        The Field Manager manages handling and access to the field resources
+
+
+
+block footer
