@@ -113,6 +113,13 @@ span.mono {
   left: 10px;
   text-align: left; }
 
+.ft_mid {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  text-align: center; }
+
 .cover_template.page .content .header .address {
   float: left;
   text-align: left;
